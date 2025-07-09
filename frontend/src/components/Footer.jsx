@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 function Footer() {
+  const [subscribers, setSubscribers] = useState({ email: '' });
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:5000/api/subscribers', subscribers);
+      alert('✅ Subscriber added');
+      setSubscribers({ email: '' });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <footer className="mt-auto">
       {/* Top Footer: Navigation + Newsletter */}
@@ -14,11 +28,14 @@ function Footer() {
           <li><a href="#">Subscribe Us</a></li>
         </ul>
 
-        <form className="flex items-center bg-white rounded overflow-hidden">
+        <form onSubmit={handleSubscribe} className="flex items-center bg-white rounded overflow-hidden">
           <input
             type="email"
             placeholder="Enter Email Address"
             className="px-4 py-2 text-sm text-gray-700 focus:outline-none"
+            value={subscribers.email}
+            onChange={(e) => setSubscribers({ email: e.target.value })}
+            required
           />
           <button
             type="submit"
