@@ -1,18 +1,41 @@
-import express from 'express'
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-import cors from 'cors'
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
-const app = express(); 
+// Import routes
+import projectRoutes from './routes/projectRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
+import subscriberRoutes from './routes/subscriberRoutes.js';
 
-const PORT = 3000 || process.env.PORT; 
-app.use(cors()); 
+// Load environment variables
+dotenv.config();
 
-app.get('/',(req,res)=>{
-    res.send('App is running'); 
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse incoming JSON
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
+
+// Route mounting
+app.use('/api/projects', projectRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/subscribers', subscriberRoutes);
+
+// Base route
+app.get('/', (req, res) => {
+  res.send('🚀 API is running...');
 });
 
-app.listen(PORT , ()=>{
-    console.log(`Server running on ${PORT}`); 
-})
-
+// Start server
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`🌐 Server listening on http://localhost:${PORT}`);
+});
