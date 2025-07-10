@@ -8,7 +8,7 @@ function ClientCard() {
 
   useEffect(() => {
     axios
-      .get(`${BASE}/api/contacts`)
+      .get(`${BASE}/api/clients`)
       .then((res) => setClientData(res.data))
       .catch(console.error);
   }, []);
@@ -18,7 +18,7 @@ function ClientCard() {
       <h2 className="text-3xl font-bold text-center mb-12">Happy Clients</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {clientData.map((client) => (
-          <div key={client._id} className="bg-blue-50 p-4 rounded-lg shadow-md text-center">
+          <div key={client.name} className="bg-blue-50 p-4 rounded-lg shadow-md text-center">
             <img
               src={`${BASE}/uploads/${client.image}`}
               alt={client.name}
