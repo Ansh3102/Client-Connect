@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 
 // Import routes
 import projectRoutes from './routes/projectRoutes.js';
@@ -15,22 +17,30 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Ensure uploads folder exists (temporary for Render)
+const uploadDir = path.resolve('uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
 // Middleware
 app.use(cors()); // Enable CORS
 app.use(express.json()); // Parse incoming JSON
+app.use('/uploads', express.static(uploadDir)); // Serve static uploaded files
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// Route mounting
+// Mount API routes
 app.use('/api/projects', projectRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/subscribers', subscriberRoutes);
-app.use('/uploads', express.static('uploads')); // to serve images
-
 
 // Base route
 app.get('/', (req, res) => {
@@ -38,6 +48,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(process.env.PORT || 5000, () => {
-  console.log(`🌐 Server listening on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`🌐 Server listening on port ${PORT}`);
 });

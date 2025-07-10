@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function Footer() {
+  const BASE = import.meta.env.VITE_API_BASE_URL;
   const [subscribers, setSubscribers] = useState({ email: '' });
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/subscribers', subscribers);
+      await axios.post(`${BASE}/api/subscribers`, subscribers);
       alert('✅ Subscriber added');
       setSubscribers({ email: '' });
     } catch (err) {

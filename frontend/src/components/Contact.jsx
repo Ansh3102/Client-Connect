@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-
 function Contact() {
+  const BASE = import.meta.env.VITE_API_BASE_URL;
+
   const [contactData, setContactData] = useState({
     fullname: '',
     email: '',
@@ -13,7 +14,7 @@ function Contact() {
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/contacts', contactData);
+      await axios.post(`${BASE}/api/contacts`, contactData);
       alert('✅ Contact Added');
       setContactData({ fullname: '', email: '', mobile: '', city: '' });
     } catch (err) {

@@ -2,11 +2,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
 function ClientCard() {
+  const BASE = import.meta.env.VITE_API_BASE_URL;
+
   const [clientData, setClientData] = useState([]);
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/clients')
+      .get(`${BASE}/api/contacts`)
       .then((res) => setClientData(res.data))
       .catch(console.error);
   }, []);
@@ -18,7 +20,7 @@ function ClientCard() {
         {clientData.map((client) => (
           <div key={client._id} className="bg-blue-50 p-4 rounded-lg shadow-md text-center">
             <img
-              src={`http://localhost:5000/uploads/${client.image}`}
+              src={`${BASE}/uploads/${client.image}`}
               alt={client.name}
               className="w-16 h-16 rounded-full mx-auto mb-4 object-cover"
             />
