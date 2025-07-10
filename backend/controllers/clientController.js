@@ -2,7 +2,16 @@ import Client from "../models/client.model.js";
 
 export const createClient = async (req, res) => {
   try {
-    const client = await Client.create(req.body);
+    const { name, description, designation } = req.body;
+    const image = req.file?.filename || '';
+
+    const client = await Client.create({
+      name,
+      description,
+      designation,
+      image,
+    });
+
     res.status(201).json(client);
   } catch (err) {
     res.status(500).json({ message: err.message });

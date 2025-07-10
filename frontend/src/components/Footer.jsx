@@ -51,7 +51,7 @@ function Footer() {
         <p className="text-sm text-gray-400">&copy; 2023 RealTrust. All rights reserved.</p>
 
         <div className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Logo" className="w-6 h-6" />
+          <img src="/logo.png" alt="Logo" className="w-10 h-6" />
           <span className="text-xl font-semibold text-white">
             Real <span className="text-blue-400">Trust</span>
           </span>

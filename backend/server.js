@@ -29,6 +29,8 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/subscribers', subscriberRoutes);
+app.use('/uploads', express.static('uploads')); // to serve images
+
 
 // Base route
 app.get('/', (req, res) => {

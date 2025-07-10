@@ -3,12 +3,11 @@ import axios from 'axios';
 
 function AdminPanel() {
   const [activeTab, setActiveTab] = useState('projects');
-  const [projectData, setProjectData] = useState({ name: '', description: '', imageUrl: '' });
-  const [clientData, setClientData] = useState({ name: '', designation: '', description: '', imageUrl: '' });
+  const [projectData, setProjectData] = useState({ name: '', description: '', image: null });
+  const [clientData, setClientData] = useState({ name: '', designation: '', description: '', image: null });
   const [contacts, setContacts] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
 
-  // Fetch contacts
   useEffect(() => {
     if (activeTab === 'contacts') {
       axios.get('http://localhost:5000/api/contacts')
@@ -17,7 +16,6 @@ function AdminPanel() {
     }
   }, [activeTab]);
 
-  // Fetch subscribers
   useEffect(() => {
     if (activeTab === 'subscribers') {
       axios.get('http://localhost:5000/api/subscribers')
@@ -26,25 +24,46 @@ function AdminPanel() {
     }
   }, [activeTab]);
 
-  const handleProjectSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:5000/api/projects', projectData);
-      alert('✅ Project added');
-      setProjectData({ name: '', description: '', imageUrl: '' });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const handleProjectSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const formData = new FormData();
+    formData.append('name', projectData.name);
+    formData.append('description', projectData.description);
+    formData.append('image', projectData.image); // this must be a File object
+
+    await axios.post('http://localhost:5000/api/projects', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    alert('✅ Project added');
+    setProjectData({ name: '', description: '', image: null });
+  } catch (err) {
+    console.error('❌ Upload failed:', err);
+    alert('Error uploading project');
+  }
+};
 
   const handleClientSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/clients', clientData);
+      const formData = new FormData();
+      formData.append('name', clientData.name);
+      formData.append('designation', clientData.designation);
+      formData.append('description', clientData.description);
+      formData.append('image', clientData.image);
+
+      await axios.post('http://localhost:5000/api/clients', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       alert('✅ Client added');
-      setClientData({ name: '', designation: '', description: '', imageUrl: '' });
+      setClientData({ name: '', designation: '', description: '', image: null });
     } catch (err) {
       console.error(err);
+      alert('Error adding client');
     }
   };
 
@@ -72,7 +91,13 @@ function AdminPanel() {
             <h2 className="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">Add New Project</h2>
             <input type="text" placeholder="Project Name" className="w-full border p-3 rounded-lg" value={projectData.name} onChange={(e) => setProjectData({ ...projectData, name: e.target.value })} />
             <textarea placeholder="Project Description" rows="4" className="w-full border p-3 rounded-lg" value={projectData.description} onChange={(e) => setProjectData({ ...projectData, description: e.target.value })}></textarea>
-            <input type="text" placeholder="Image URL" className="w-full border p-3 rounded-lg" value={projectData.imageUrl} onChange={(e) => setProjectData({ ...projectData, imageUrl: e.target.value })} />
+            <input
+  type="file"
+  accept="image/*"
+  className="w-full border p-3 rounded-lg bg-white"
+  onChange={(e) => setProjectData({ ...projectData, image: e.target.files[0] })}
+/>
+
             <button type="submit" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-700 transition">Save Project</button>
           </form>
         )}
@@ -80,11 +105,39 @@ function AdminPanel() {
         {activeTab === 'clients' && (
           <form onSubmit={handleClientSubmit} className="space-y-6">
             <h2 className="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">Add New Client</h2>
-            <input type="text" placeholder="Client Name" className="w-full border p-3 rounded-lg" value={clientData.name} onChange={(e) => setClientData({ ...clientData, name: e.target.value })} />
-            <input type="text" placeholder="Client Designation" className="w-full border p-3 rounded-lg" value={clientData.designation} onChange={(e) => setClientData({ ...clientData, designation: e.target.value })} />
-            <textarea placeholder="Client Description" rows="4" className="w-full border p-3 rounded-lg" value={clientData.description} onChange={(e) => setClientData({ ...clientData, description: e.target.value })}></textarea>
-            <input type="text" placeholder="Image URL" className="w-full border p-3 rounded-lg" value={clientData.imageUrl} onChange={(e) => setClientData({ ...clientData, imageUrl: e.target.value })} />
-            <button type="submit" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-700 transition">Save Client</button>
+            <input
+              type="text"
+              placeholder="Client Name"
+              className="w-full border p-3 rounded-lg"
+              value={clientData.name}
+              onChange={(e) => setClientData({ ...clientData, name: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Client Designation"
+              className="w-full border p-3 rounded-lg"
+              value={clientData.designation}
+              onChange={(e) => setClientData({ ...clientData, designation: e.target.value })}
+            />
+            <textarea
+              placeholder="Client Description"
+              rows="4"
+              className="w-full border p-3 rounded-lg"
+              value={clientData.description}
+              onChange={(e) => setClientData({ ...clientData, description: e.target.value })}
+            ></textarea>
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full border p-3 rounded-lg bg-white"
+              onChange={(e) => setClientData({ ...clientData, image: e.target.files[0] })}
+            />
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-blue-700 transition"
+            >
+              Save Client
+            </button>
           </form>
         )}
 
